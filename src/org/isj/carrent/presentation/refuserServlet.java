@@ -1,0 +1,37 @@
+package org.isj.carrent.presentation;
+
+import org.isj.carrent.domaine.Reservation;
+import org.isj.carrent.domaine.Utilisateur;
+import org.isj.carrent.domaine.enumerations.StatutReservation;
+import org.isj.carrent.services.Iservice;
+import org.isj.carrent.services.ServiceImpl;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet(name = "refuserServlet", urlPatterns = {"/ref"})
+public class refuserServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("isjcarrent2-pu");
+        EntityManager em = emf.createEntityManager();
+        Iservice service = new ServiceImpl(em);
+        int id =Integer.parseInt(request.getParameter("refuser"));
+        //Utilisateur u =service.findByuser(request.getSession().getAttribute("user").toString());
+            StatutReservation statutReservation =StatutReservation.Refusé;
+            Reservation reservation=service.findReservationId(id);
+            service.updatereservation(reservation,statutReservation);
+            request.getRequestDispatcher("/listreserv").forward(request, response);
+
+        }
+}
